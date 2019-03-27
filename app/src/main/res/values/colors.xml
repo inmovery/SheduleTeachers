@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#050505</color>
+    <color name="colorPrimaryDark">#050505</color><!--Строка, в которой зарядка и время-->
+    <color name="colorPrimaryLight">#BBDEFB</color>
+    <color name="colorAccent">#050505</color>
+    <color name="textColorPrimary">@android:color/primary_text_light</color>
+    <color name="textColorSecondary">@android:color/secondary_text_light</color>
+
+    <color name="default_calendar_background_color">@android:color/white</color>
+    <color name="default_month_text_color">#595f66</color>
+    <color name="default_other_day_text_color">#c9cacd</color>
+    <color name="default_day_text_color">#4a4a4a</color>
+    <color name="default_weekend_day_text_color">#7b68ee</color>
+    <color name="default_week_day_title_text_color">#91959b</color>
+    <color name="default_selected_day_text_color">@android:color/white</color>
+
+    <color name="default_selected_day_background_color">#7659d4</color><!--#33d993-->
+    <color name="default_selected_day_background_start_color">#5533C7</color><!--#00cf7d-->
+    <color name="default_selected_day_background_end_color">#44299e</color><!--#00a564-->
+
+    <color name="default_connected_day_text_color">#f00</color>
+    <color name="default_connected_day_selected_text_color">#f00</color>
+    <color name="default_disabled_day_text_color">#c9cacd</color>
+    <color name="default_border_color">#ececec</color>
+    <color name="default_selection_bar_month_title_text_color">#c9cacd</color>
+
+    <color name="colorWhite">#ffffff</color>
+    <color name="colorWhiteTransparent">#7b68ee</color>
+
+
+    <color name="demo_dark_transparent">#24000000</color>
+
+
+</resources>

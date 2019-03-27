@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "43971216732",
+    "firebase_url": "https://notifications-for-hse-teachers.firebaseio.com",
+    "project_id": "notifications-for-hse-teachers",
+    "storage_bucket": "notifications-for-hse-teachers.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:43971216732:android:0c6e9a6e9e607875",
+        "android_client_info": {
+          "package_name": "hse.sheduleteachers"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "43971216732-93h122sqv4c3j7kmk9emj9qtmg9d9fso.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBlfppLnwyZNtcYXYqbdjJGYgSBu3qlocg"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
