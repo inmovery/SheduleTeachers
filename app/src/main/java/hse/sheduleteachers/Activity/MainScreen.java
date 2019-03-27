@@ -143,6 +143,7 @@ public class MainScreen extends AppCompatActivity implements View.OnClickListene
             isExpanded = !isExpanded;
             appBarLayout.setExpanded(isExpanded, true);
         });
+
     }
 
     /*
@@ -340,6 +341,8 @@ public class MainScreen extends AppCompatActivity implements View.OnClickListene
         sessionManager.createSession();
         saveData("NAME",getDataString("NAME"));
         saveData("TEACHER_ID",getDataInt("TEACHER_ID"));
+        saveData("TOKEN",getDataString("TOKEN"));
+        saveData("PUSH",getDataInt("PUSH"));
     }
 
     @Override

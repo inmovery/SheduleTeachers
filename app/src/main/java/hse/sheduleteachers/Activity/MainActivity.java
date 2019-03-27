@@ -93,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
                                         sessionManager.createSession();
                                         saveData("NAME",item);
                                         saveData("TEACHER_ID",position+1);
+                                        saveData("TOKEN", teacherList.get(position+1).getToken());
                                         //saveData("CALENDAR", "SINGLE");
                                         startActivity(new Intent(MainActivity.this, MainScreen.class));
                                         Animatoo.animateFade(MainActivity.this);

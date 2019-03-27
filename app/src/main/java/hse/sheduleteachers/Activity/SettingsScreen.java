@@ -6,12 +6,10 @@ import android.graphics.Color;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -26,85 +24,193 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
+import com.suke.widget.SwitchButton;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import hse.sheduleteachers.Feedback;
 import hse.sheduleteachers.R;
+import hse.sheduleteachers.SettingsDesign;
 import hse.sheduleteachers.Storage.SessionManager;
 
 import static hse.sheduleteachers.Storage.SessionManager.getDataInt;
 import static hse.sheduleteachers.Storage.SessionManager.getDataString;
+import static hse.sheduleteachers.Storage.SessionManager.saveData;
 
 public class SettingsScreen extends AppCompatActivity {
 
-    private Button logout_btn;
+    private Button mLogout;
 
-    SessionManager sessionManager;
+    SessionManager sessionManager;//для работы с SharedPreferences
 
-    private TextView fio;
+    private TextView mFio;//ФИО преподавателя
 
-    private Button mButton;
+    private LinearLayout mFrame;//основная панель для вывода snackbar
 
-    LinearLayout linal;
+    private SwitchButton mSwitchPushNotification;//переключатель уведомлений
+
+    private LinearLayout mSettingsCalendar;//настройка уведомлений
+
+    private LinearLayout mSettingsFeedback;//обратная связь
+
+    private LinearLayout mSettingsDesign;//настройка интерфейса
+
+    private ImageView mAddPush;//настройка дополнительных уведомлений
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings_screen);
 
+        //Добавление кнопки "Назад"
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        //Установка названия активити
         setTitle("Настройки");
 
-        sessionManager = new SessionManager(this);
+        /*Инициализация Firebase*/
+        FirebaseApp.initializeApp(this);
 
-        linal = (LinearLayout)findViewById(R.id.linal);
+        sessionManager = new SessionManager(this);//для работы с SharedPreferences
 
-        logout_btn = findViewById(R.id.logout_btn);
+        mFrame = (LinearLayout)findViewById(R.id.main_frame);
+        mLogout = findViewById(R.id.logout_btn);
+        mFio = (TextView)findViewById(R.id.initials);
+        mSwitchPushNotification = (SwitchButton)findViewById(R.id.show_hide_push);
 
-        fio = (TextView)findViewById(R.id.settings_text);
+        mSettingsCalendar = (LinearLayout)findViewById(R.id.settings_calendar);
+        mSettingsFeedback = (LinearLayout)findViewById(R.id.feedback);
+        mSettingsDesign = (LinearLayout)findViewById(R.id.settings_design);
 
-        fio.setText("ФИО: "+getDataString("NAME"));
+        mAddPush = (ImageView)findViewById(R.id.dop_push);
+        if(getDataString("TOKEN") != "") saveData("PUSH", 1);
+        else saveData("PUSH", 0);
 
-        //Кнопка выйти из аккаунта
-        logout_btn.setOnClickListener(new View.OnClickListener() {
+        //Работа с переключателем уведомлений
+        if(getDataInt("PUSH") != 0) {
+            mSwitchPushNotification.setChecked(true);
+            //mAddPush.setVisibility(View.VISIBLE);
+        } else mSwitchPushNotification.setChecked(false);
+
+        //mSwitchPushNotification.toggle(true);
+        //mSwitchPushNotification.setShadowEffect(true);
+        mSwitchPushNotification.setOnCheckedChangeListener(new SwitchButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(SwitchButton view, boolean isChecked) {
+
+                if(mSwitchPushNotification.isChecked()){ //если нажали "Включить уведомления"
+                    saveData("PUSH",1);
+                    saveData("TOKEN","awdawd");
+                    FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener( SettingsScreen.this,  new OnSuccessListener<InstanceIdResult>() {
+                        @Override
+                        public void onSuccess(InstanceIdResult instanceIdResult) {
+                            String token = instanceIdResult.getToken();
+                            registerToken(getApplicationContext(),token);
+                        }
+                    });
+
+                    //mAddPush.setVisibility(View.VISIBLE);
+                    //добавили настройки доп. уведомлений
+
+                    Snackbar snackbar = Snackbar.make(mFrame, "Уведомления включены!", Snackbar.LENGTH_SHORT);
+                    //цвет шрифта во всплывающем окне
+                    snackbar.setActionTextColor(Color.rgb(124, 12, 176));
+
+                    View snackBarView = snackbar.getView();
+                    TextView textView = (TextView) snackBarView.findViewById(android.support.design.R.id.snackbar_text);
+                    textView.setTextColor(Color.GREEN);
+                    snackbar.show();
+
+                } else { //если нажали "Отключить уведомления"
+
+                    saveData("PUSH",0);
+                    saveData("TOKEN","");
+                    deleteToken(getApplicationContext());
+
+                    mAddPush.setVisibility(View.INVISIBLE);//убрали доп. уведомления.
+                    //очистили настройки доп. уведомлений
+
+                    Snackbar snackbar = Snackbar.make(mFrame, "Уведомления отключены!", Snackbar.LENGTH_SHORT);
+                    //цвет шрифта во всплывающем окне
+                    snackbar.setActionTextColor(Color.rgb(124, 12, 176));
+
+                    View snackBarView = snackbar.getView();
+                    TextView textView = (TextView) snackBarView.findViewById(android.support.design.R.id.snackbar_text);
+                    textView.setTextColor(Color.MAGENTA);
+                    snackbar.show();
+                }
+                //Toast.makeText(getApplicationContext(), String.valueOf(mSwitchPushNotification.isChecked()), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+        //переход на экран настройки календаря
+        mSettingsCalendar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(SettingsScreen.this, SettingsCalendar.class));
+            }
+        });
+
+        //переход на экран обратной связи
+        mSettingsFeedback.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(SettingsScreen.this, Feedback.class));
+            }
+        });
+
+        //переход на экран настройки интерфейса(дизайна)
+        mSettingsDesign.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(SettingsScreen.this, SettingsDesign.class));
+            }
+        });
+
+        //переход на экран с дополнительными настройками уведомлений
+        mAddPush.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //...
+            }
+        });
+
+
+        //Установка ФИО преподавателя
+        mFio.setText(getDataString("NAME"));
+
+        //Обработка кнопки "Выйти"
+        mLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 sessionManager.logout();
+                Animatoo.animateFade(SettingsScreen.this);
             }
         });
 
-        FirebaseApp.initializeApp(this);
-        mButton = (Button)findViewById(R.id.open_push);
-        mButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener( SettingsScreen.this,  new OnSuccessListener<InstanceIdResult>() {
-                    @Override
-                    public void onSuccess(InstanceIdResult instanceIdResult) {
-                        String token = instanceIdResult.getToken();
-                        registerToken(getApplicationContext(),token);
-                        Log.e("newToken",token);
-                    }
-                });
-                mButton.setVisibility(View.INVISIBLE);
-            }
-        });
+
+
+
 
 
     }
 
-    void registerToken(Context context, final String token){
+
+    /*
+    * Реистрация мобильного устройства (включение уведомлений)
+    * */
+    private void registerToken(Context context, final String token){
         StringRequest stringRequest = new StringRequest(Request.Method.POST,"https://devredowl.ru/tparser/push/register.php", new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                //...
+                //Если запрос прошёл успешно
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                //...
+                //Обработка ошибки при отправке запроса
             }
         }){
             @Override
@@ -115,52 +221,67 @@ public class SettingsScreen extends AppCompatActivity {
                 return params;
             }
 
-//            @Override
-//            public Map<String, String> getHeaders() throws AuthFailureError {
-//                Map<String,String> params = new HashMap<String, String>();
-//                params.put("Content-Type","application/x-www-form-urlencoded");
-//                return params;
-//            }
         };
         RequestQueue queue = Volley.newRequestQueue(context);
         queue.add(stringRequest);
 
-        Snackbar snackbar = Snackbar.make(linal, "Уведомления включены!", Snackbar.LENGTH_INDEFINITE)
-                .setAction("ОК", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
+    }
 
-                    }
-                });
+    /*
+     * Удаление токена мобильного устройства (отключение уведомлений)
+     * */
+    private void deleteToken(Context context){
+        StringRequest stringRequest = new StringRequest(Request.Method.POST,"https://devredowl.ru/tparser/push/delete.php", new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                //Если запрос прошёл успешно
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                //Обработка ошибки при отправке запроса
+            }
+        }){
+            @Override
+            protected Map<String,String> getParams(){
+                Map<String,String> params = new HashMap<String, String>();
+                params.put("Id",String.valueOf(getDataInt("TEACHER_ID")));
+                return params;
+            }
 
-        // Message text color
-        snackbar.setActionTextColor(Color.rgb(124, 12, 176));
-
-
-
-        // Action button text color
-        View snackBarView = snackbar.getView();
-
-        TextView textView = (TextView) snackBarView.findViewById(android.support.design.R.id.snackbar_text);
-        textView.setTextColor(Color.WHITE);
-        snackbar.show();
+        };
+        RequestQueue queue = Volley.newRequestQueue(context);
+        queue.add(stringRequest);
 
     }
 
-
+    /*
+    * Обработка кнопки "Назад"
+    * */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch(item.getItemId()){
             case android.R.id.home:
+                saveData("NAME",getDataString("NAME"));
+                saveData("TEACHER_ID",getDataInt("TEACHER_ID"));
+                saveData("TOKEN",getDataString("TOKEN"));
+                saveData("PUSH",getDataInt("PUSH"));
                 finish();
                 Animatoo.animateFade(this);
                 return true;
         }
-        //startActivity(new Intent(getApplicationContext(), MainScreen.class));
 
         return super.onOptionsItemSelected(item);
     }
 
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        saveData("NAME",getDataString("NAME"));
+        saveData("TEACHER_ID",getDataInt("TEACHER_ID"));
+        saveData("TOKEN",getDataInt("TOKEN"));
+    }
 
 }

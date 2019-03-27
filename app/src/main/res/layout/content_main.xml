@@ -58,14 +58,6 @@
             android:text="На данный день у вас нет расписания занятий"
             android:gravity="center"/>
 
-        <!--<ImageView-->
-            <!--android:visibility="invisible"-->
-            <!--android:id="@+id/illon"-->
-            <!--android:layout_below="@+id/text_empty_pairs"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:src="@drawable/two2"/>-->
-
     </RelativeLayout>
 
 </android.support.constraint.ConstraintLayout >

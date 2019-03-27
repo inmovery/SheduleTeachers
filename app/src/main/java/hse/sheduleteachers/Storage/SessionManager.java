@@ -25,7 +25,9 @@ public class SessionManager {
         editor = sharedPreferences.edit();
     }
 
-    //Создание сессий
+    /*
+    * Сохранение авторизации
+    * */
     public void createSession(){
         editor.putBoolean(LOGIN, true);
         editor.apply();
@@ -36,29 +38,41 @@ public class SessionManager {
         return sharedPreferences.getBoolean(LOGIN, false);
     }
 
-    //Выход из аккаунта
+    /*
+    * Выход из аккаунта
+    * */
     public void logout(){
         editor.clear();
         editor.commit();
         context.startActivity(new Intent(context, MainActivity.class));
-        //((MainScreen) context).finish();
     }
 
-    /*Сохранение символьных данных*/
+    /*
+    * Сохранение символьных данных
+    * */
     public static void saveData(String name, String value){
         editor.putString(name, value);
         editor.apply();
     }
-    /*Сохранение числовых данных*/
+
+    /*
+    * Сохранение числовых данных
+    * */
     public static void saveData(String name, int value){
         editor.putInt(name, value);
         editor.apply();
     }
-    /*Получение данных строкой*/
+
+    /*
+    * Получение данных строкой
+    * */
     public static String getDataString(String name){
         return sharedPreferences.getString(name,null);
     }
-    /*Получение данных числом*/
+
+    /*
+    * Получение данных числом
+    * */
     public static int getDataInt(String name){
         return sharedPreferences.getInt(name,0);
     }

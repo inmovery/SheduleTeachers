@@ -1,4 +1,4 @@
-package hse.sheduleteachers;
+package hse.sheduleteachers.Notifications;
 
 import android.annotation.SuppressLint;
 import android.app.Notification;
@@ -30,35 +30,39 @@ import java.util.HashMap;
 import java.util.Map;
 
 import hse.sheduleteachers.Activity.MainScreen;
+import hse.sheduleteachers.R;
 
 import static android.content.ContentValues.TAG;
 
-public class MyFirebaseMessagingService extends FirebaseMessagingService {
+public class FirebaseReceiwer extends FirebaseMessagingService {
 
     public final int NOTIFICATION_ID = 0;
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
-        //super.onMessageReceived(remoteMessage);
-        showNotification(remoteMessage.getNotification().getBody());
 
-        // Not getting messages here?
-        Log.d(TAG, "From: " + remoteMessage.getFrom());
-
-        // Check if message contains a notification payload.
+        //Проверка пустоты текста сообщения в уведомлениях
         if (remoteMessage.getNotification() != null) {
-            Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
+            Log.d(TAG, "Уведомление: " + remoteMessage.getNotification().getBody());
         }
+
+        showNotification(remoteMessage.getNotification().getBody());
 
     }
 
+
+    /*
+    * Изменение токена мобильного устройства
+    * */
     @Override
     public void onNewToken(String token) {
         super.onNewToken(token);
-        Log.d(TAG, "Refreshed token: " + token);
+        Log.d(TAG, "Новый токен: " + token);
     }
 
-
+    /*
+    * Отправка уведомлений
+    * */
     private void showNotification(String message){
 
         NotificationManager manager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
